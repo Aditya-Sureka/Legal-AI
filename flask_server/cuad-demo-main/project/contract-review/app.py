@@ -1,0 +1,351 @@
+# from flask import Flask, render_template, request
+# from textblob import TextBlob
+# from paraphrase import paraphrase
+# from predict import run_prediction
+# from io import StringIO
+# import json
+# from flask_cors import CORS
+
+# app = Flask(__name__)
+# CORS(app)
+# answers = []
+
+
+
+
+
+# def load_questions_short():
+#     questions_short = []
+#     with open('data/questions_short.txt', encoding="utf8") as f:
+#         questions_short = f.readlines()
+
+
+#     return questions_short
+
+
+# def getContractAnalysis(selected_response):
+#     print(selected_response)
+    
+#     if selected_response == "":
+#         return "No answer found in document"
+#     else:
+#         blob = TextBlob(selected_response)
+#         polarity = blob.sentiment.polarity
+#         print(polarity)
+
+#         if polarity > 0:
+#             return "Positive"
+#         elif polarity < 0:
+#             return "Negative"
+#         else:
+#             return "Neutral"
+
+
+
+# questions_short = load_questions_short()
+
+
+
+# @app.route('/questionsshort')
+# def getQuestionsShort():
+#     return questions_short
+
+
+
+
+# @app.route('/contracts/', methods=["POST"])
+# def getContractResponse():
+    
+#     file = request.files["file"]
+#     question = request.form['question']
+
+#     # Process the text file
+#     stringio = StringIO(file.getvalue().decode("utf-8"))
+#     response = []
+#     answer = ""
+#     # To read file as string:
+#     paragraph = stringio.read()
+
+#     if (not len(paragraph)==0) and not (len(question)==0):
+#         print('getting predictions')
+        
+#         predictions = run_prediction([question], paragraph, 'marshmellow77/roberta-base-cuad',
+#                                          n_best_size=5)
+#         answer = []
+#         if predictions['0'] == "":
+#             answer.append({
+#                 "answer": 'No answer found in document',
+#                 "probability": ""
+#             })
+#         else:
+#             # if number_results == '1':
+#             #     answer = f"Answer: {predictions['0']}"
+#             #     # st.text_area(label="Answer", value=f"{answer}")
+#             # else:
+            
+#             with open("nbest.json", encoding="utf8") as jf:
+#                 data = json.load(jf)
+#                 for i in range(int(5)):
+#                     answer.append({
+#                         "answer": data['0'][i]['text'],
+#                         "probability": f"{round(data['0'][i]['probability']*100, 1)}%",
+#                         "analyse": getContractAnalysis(data['0'][i]['text'])
+#                     })
+#         return json.dumps(answer)
+
+#     else:
+#         return "Unable to call model, please select question and contract"
+
+ 
+
+
+
+
+# @app.route('/contracts/paraphrase/<path:selected_response>', methods=['GET'])
+# def getContractParaphrase(selected_response):
+#     print(selected_response)
+    
+#     if selected_response == "":
+#         return "No answer found in document"
+#     else:
+#         print('getting paraphrases')
+#         paraphrases = paraphrase(selected_response)
+#         print(paraphrases)
+#         return paraphrases
+
+# @app.route('/get_response', methods=['POST'])
+# def get_response():
+#     question = request.form['selected_response']
+#     with open('responses.json', 'r') as file:
+#         responses = json.load('responses.json')
+#         for response in responses:
+#             if response['question'] == question:
+#                 return response['answer']
+    
+#     return "Response not found"
+
+
+
+# """ @app.route('/upload', methods=['POST'])
+# def upload():
+#     file = request.files['file']
+#     file_content = file.read().decode('utf-8')
+#     return file_content """
+
+# @app.route('/proces', methods=['POST'])
+# def process():
+#     print("Inside the process route")
+#     file = request.files["file"]
+    
+    
+#     # Process the text file
+#     stringio = StringIO(file.getvalue().decode("utf-8"))
+
+#     # To read file as string:
+#     paragraph = stringio.read()
+    
+   
+#     questions = questions_short
+  
+    
+#     # Perform your question processing and generate the responses
+#     responses = []
+#     if (not len(paragraph)==0):
+#         print('getting predictions')
+        
+#         for question in questions:
+#             predictions = run_prediction([question], paragraph, 'marshmellow77/roberta-base-cuad', n_best_size=1)
+#             answer = ""
+#             if predictions['0'] == "":
+#                 answer = 'No answer found in document'
+#             else:
+#                 with open("nbest.json", encoding="utf8") as jf:
+#                     data = json.load(jf)
+#                     for i in range(int(1)):
+#                         """  answer += f"Question: {question}\n" """
+#                         answer += f" {data['0'][i]['text']}\n"
+#                         answer += f"Probability: {round(data['0'][i]['probability']*100, 1)}%\n\n"
+#             responses.append({"question": question, "answer": answer})
+
+#         # Save the responses to a JSON file
+#         with open('responses.json', 'w') as file:
+#             json.dump(responses, file)
+       
+#         return "saved responses"
+#     else:
+#         print('no text')
+#         return "something went wrong"
+
+    
+
+
+
+
+
+# if __name__ == '__main__':
+#     app.run()
+
+
+from flask import Flask, render_template, request, jsonify
+from textblob import TextBlob
+from paraphrase import paraphrase
+from predict import run_prediction
+from io import StringIO
+import json
+from flask_cors import CORS
+
+app = Flask(__name__)
+CORS(app)
+answers = []
+
+
+def load_questions_short():
+    questions_short = []
+    with open('data/questions_short.txt', encoding="utf8") as f:
+        questions_short = f.readlines()
+    return questions_short
+
+
+def getContractAnalysis(selected_response):
+    print(selected_response)
+    
+    if selected_response == "":
+        return "No answer found in document"
+    else:
+        blob = TextBlob(selected_response)
+        polarity = blob.sentiment.polarity
+        print(polarity)
+
+        if polarity > 0:
+            return "Positive"
+        elif polarity < 0:
+            return "Negative"
+        else:
+            return "Neutral"
+
+
+questions_short = load_questions_short()
+
+# Root route to avoid 404 error
+@app.route('/')
+def home():
+    return "Welcome to the Contract Analysis App!"
+
+
+@app.route('/questionsshort')
+def getQuestionsShort():
+    return jsonify(questions_short)
+
+
+@app.route('/contracts/', methods=["POST"])
+def getContractResponse():
+    file = request.files.get("file")
+    question = request.form.get('question')
+
+    if not file or not question:
+        return "Unable to call model, please select question and contract", 400
+
+    # Process the text file
+    stringio = StringIO(file.getvalue().decode("utf-8"))
+    paragraph = stringio.read()
+
+    if paragraph and question:
+        print('Getting predictions')
+
+        predictions = run_prediction([question], paragraph, 'marshmellow77/roberta-base-cuad', n_best_size=5)
+        answer = []
+
+        if predictions['0'] == "":
+            answer.append({
+                "answer": 'No answer found in document',
+                "probability": ""
+            })
+        else:
+            with open("nbest.json", encoding="utf8") as jf:
+                data = json.load(jf)
+                for i in range(5):
+                    answer.append({
+                        "answer": data['0'][i]['text'],
+                        "probability": f"{round(data['0'][i]['probability']*100, 1)}%",
+                        "analyse": getContractAnalysis(data['0'][i]['text'])
+                    })
+        return jsonify(answer)
+    else:
+        return "No text found in the document or question is missing", 400
+
+
+@app.route('/contracts/paraphrase/<path:selected_response>', methods=['GET'])
+def getContractParaphrase(selected_response):
+    print(selected_response)
+
+    if selected_response == "":
+        return "No answer found in document", 400
+    else:
+        print('Getting paraphrases')
+        paraphrases = paraphrase(selected_response)
+        print(paraphrases)
+        return jsonify(paraphrases)
+
+
+@app.route('/get_response', methods=['POST'])
+def get_response():
+    question = request.form.get('selected_response')
+
+    if not question:
+        return "No question provided", 400
+
+    with open('responses.json', 'r') as file:
+        responses = json.load(file)
+        for response in responses:
+            if response['question'] == question:
+                return jsonify(response['answer'])
+
+    return "Response not found", 404
+
+
+@app.route('/proces', methods=['POST'])
+def process():
+    print("Inside the process route")
+    file = request.files.get("file")
+
+    if not file:
+        return "File not provided", 400
+
+    # Process the text file
+    stringio = StringIO(file.getvalue().decode("utf-8"))
+    paragraph = stringio.read()
+
+    if not paragraph:
+        return "Empty file provided", 400
+
+    questions = questions_short
+
+    # Perform your question processing and generate the responses
+    responses = []
+    if paragraph:
+        print('Getting predictions')
+
+        for question in questions:
+            predictions = run_prediction([question], paragraph, 'marshmellow77/roberta-base-cuad', n_best_size=1)
+            answer = ""
+            if predictions['0'] == "":
+                answer = 'No answer found in document'
+            else:
+                with open("nbest.json", encoding="utf8") as jf:
+                    data = json.load(jf)
+                    for i in range(1):
+                        answer += f" {data['0'][i]['text']}\n"
+                        answer += f"Probability: {round(data['0'][i]['probability']*100, 1)}%\n\n"
+            responses.append({"question": question, "answer": answer})
+
+        # Save the responses to a JSON file
+        with open('responses.json', 'w') as file:
+            json.dump(responses, file)
+
+        return "Responses saved successfully"
+    else:
+        return "Something went wrong", 400
+
+
+if __name__ == '__main__':
+    app.run()
