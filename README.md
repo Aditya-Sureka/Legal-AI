@@ -1,8 +1,8 @@
 # Legal-AI
 
-A full‑stack web application that combines a TypeScript/Next.js frontend with a Python/Flask backend to provide AI-assisted legal features (document analysis, Q&A, newsletter/contact pages, and project info). The repository organizes UI components in TypeScript, a Flask server for AI interactions, and static/public assets for the site.
+A **full‑stack** web application that combines a **TypeScript/Next.js** frontend with a **Python/Flask** backend to provide AI-assisted legal features **(document analysis, Q&A, newsletter/contact pages, and project info)**. The repository organises UI components in **TypeScript**, a Flask server for AI interactions, and static/public assets for the site.
 
-Maintainer: Aditya-Sureka (they/them)
+**Maintainer: Aditya-Sureka (they/them)**
 
 ## Table of contents
 - Project overview
@@ -23,88 +23,119 @@ Maintainer: Aditya-Sureka (they/them)
 - Contact
 
 ## Project overview
-Legal-AI is designed to provide legal assistance via an interactive web UI and an API-backed AI service. The frontend uses TypeScript/React components to assemble pages and UX elements (navbar, footer, contact/newsletter components, project/skills sections). The Flask backend handles AI requests, integrations, and any server-side logic.
+**Legal-AI** is designed to provide legal assistance via an interactive web UI and an API-backed AI service. The frontend uses **TypeScript/React** components to assemble pages and UX elements (navbar, footer, contact/newsletter components, project/skills sections). The Flask backend handles AI requests, integrations, and any server-side logic.
 
 ## Key features
-- Interactive frontend built in TypeScript/React (components under components/)
+- Interactive frontend built in **TypeScript/React** (components under components/)
 - Flask-based backend (flask_server/) to handle AI requests and integrations
 - Newsletter and contact form components
 - Project/skills listing pages and reusable UI components
-- Dockerfile present for containerized builds
+- Dockerfile present for containerised builds
 
 ## Tech stack
-- Frontend: TypeScript, React, Next.js (TSX components, CSS modules)
-- Backend: Python, Flask
-- Styling: CSS / CSS modules
-- Containerization: Docker (Dockerfile present)
-- AI/third-party integrations: environment-driven (API keys and endpoints)
+- **Frontend: TypeScript, React, Next.js** (TSX components, CSS modules)
+- **Backend: Python, Flask**
+- **Styling: CSS / CSS modules**
+- **Containerization: Docker** (Dockerfile present)
+- **AI/third-party integrations: environment-driven** (API keys and endpoints)
 
 ## Repository structure (top-level)
-- components/ — React/TSX UI components (navbar, header, footer, contact, newsletter, projects, skills, etc.)
-- pages/ — Next.js pages (site routes)
-- public/ — static assets
-- styles/ — global and component styles
-- flask_server/ — Python Flask backend and server-side code
-- README.md — this file
+- **components/ — React/TSX UI components** (navbar, header, footer, contact, newsletter, projects, skills, etc.)
+- **pages/ — Next.js pages** (site routes)
+- **public/ — static assets**
+- **styles/ — global and component styles**
+- **flask_server/ — Python Flask backend and server-side code**
+- **README.md — this file**
 
-(Inspect the repository for additional files such as package.json, requirements.txt, Dockerfile, and any config files to confirm exact scripts and entrypoints.)
+(Inspect the repository for additional files, such as package.json, requirements.txt, Dockerfile, and any config files, to confirm the exact scripts and entrypoints.)
 
 ## Getting started (developer)
 
 ### Prerequisites
-- Node.js (v16+ recommended; check package.json engines)
-- npm or pnpm or yarn
-- Python 3.8+ and virtualenv (for the Flask backend)
-- Docker (optional, for containerized runs)
+- **Node.js** (v16+ recommended; check package.json engines)
+- **npm or pnpm or yarn**
+- **Python 3.8+** and virtualenv (for the Flask backend)
+- **Docker** (optional, for containerized runs)
 
 ### Frontend — quick start
 1. At repository root (the Next.js app likely lives at the repo root along with components/ and pages/):
    - Install dependencies:
-     - npm install
-     - or pnpm install
+     ```
+      npm install
+     ```
+     ```
+      pnpm install
+     ```
+     
    - Start dev server:
-     - npm run dev
+   - ```
+      npm run dev
+     ```
    - Build for production:
-     - npm run build
+     ```
+     npm run build
+     ```
    - Start production server:
-     - npm run start
-2. Notes:
+     ```
+      npm run start
+     ```
+     
+3. Notes:
    - Confirm the exact script names in package.json (dev, build, start, lint, test).
-   - If using environment variables for the frontend, they should be prefixed with NEXT_PUBLIC_ to be exposed to the browser.
+   - If using environment variables for the frontend, they should be prefixed with **NEXT_PUBLIC_** to be exposed to the browser.
 
 ### Backend (Flask) — quick start
 1. Change into the backend directory:
-   - cd flask_server
-2. Create and activate virtual environment:
-   - python -m venv .venv
-   - source .venv/bin/activate (macOS/Linux) or .venv\Scripts\activate (Windows)
-3. Install dependencies:
+ ```
+ cd flask_server
+```
+
+3. Create and activate a virtual environment:
+   ```
+    python -m venv .venv
+   ```
+   ```
+   source .venv/bin/activate (macOS/Linux) or .venv\Scripts\activate (Windows)
+   ```
+4. Install dependencies:
+   ```
    - pip install -r requirements.txt
-4. Run the app:
-   - If there is an app entrypoint (e.g., app.py or run.py): python app.py
+   ```
+6. Run the app:
+   - If there is an app entrypoint (e.g., app.py or run.py):
+     ```
+     python app.py
+     ```
    - Or use Flask CLI:
-     - export FLASK_APP=app.py
-     - flask run --host=0.0.0.0 --port=5000
-5. Notes:
+     - **export FLASK_APP=app.py**
+       ```
+       flask run --host=0.0.0.0 --port=5000
+       ```
+7. Notes:
    - Inspect flask_server/ to confirm the main module name and any available run scripts.
    - Backend will likely require API keys (see Environment variables).
 
 ### Docker
 1. Build:
-   - docker build -t legal-ai .
-2. Run:
-   - docker run -p 3000:3000 -p 5000:5000 --env-file .env -it legal-ai
-3. If repository uses docker-compose, prefer docker-compose up --build to wire frontend and backend together.
+   ```
+   docker build -t legal-ai
+   ```
+3. Run:
+   ```
+   docker run -p 3000:3000 -p 5000:5000 --env-file .env -it legal-ai
+   ```
+5. If the repository uses Docker Compose, prefer docker-compose up --build to wire frontend and backend together.
 
 ## Environment variables
 Create a .env (and .env.example) with the variables required by both frontend and backend. Example variables to include (adjust to actual keys used in code):
+```
 - OPENAI_API_KEY=your_openai_key_here
 - NEXT_PUBLIC_API_BASE_URL=http://localhost:5000    # frontend → backend
 - FLASK_ENV=development
 - FLASK_APP=app.py
 - PORT=3000
 - MAILCHIMP_API_KEY=your_mailchimp_key_here (if newsletter uses Mailchimp)
-- Any other keys referenced in config files or code (search for os.environ or process.env in the repo)
+```
 
 Always keep secret keys out of source control.
 
